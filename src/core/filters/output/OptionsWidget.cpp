@@ -286,6 +286,8 @@ OptionsWidget::disablePictureLayer()
 
 OptionsWidget::~OptionsWidget()
 {
+    // Explicitly disconnect all connections to avoid signals during destruction
+    disconnect();
 }
 
 void

@@ -186,6 +186,8 @@ OptionsWidget::OptionsWidget(IntrusivePtr<Settings> const& settings,
 
 OptionsWidget::~OptionsWidget()
 {
+    // Explicitly disconnect all connections to avoid signals during destruction
+    disconnect();
 }
 
 void

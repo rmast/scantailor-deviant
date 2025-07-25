@@ -440,6 +440,13 @@ MainWindow::switchToNewProject(
     stopBatchProcessing(CLEAR_MAIN_AREA);
     m_ptrInteractiveQueue->cancelAndClear();
 
+    // Don't create new widgets if we're closing
+    if (m_closing) {
+        m_ptrPages = pages;
+        m_projectFile = project_file_path;
+        return;
+    }
+
     Utils::maybeCreateCacheDir(out_dir);
 
     m_ptrPages = pages;
@@ -736,11 +743,16 @@ MainWindow::timerEvent(QTimerEvent* const event)
     // We only use the timer event for delayed closing of the window.
     killTimer(event->timerId());
 
+    // Set closing flag before attempting to close project to prevent widget creation
+    m_closing = true;
+    
     pauseAutoSaveTimer();
     if (closeProjectInteractive()) {
-    m_closing = true;
-    saveWindowSettigns();
-    close();
+        saveWindowSettigns();
+        close();
+    } else {
+        // Reset closing flag if user cancelled
+        m_closing = false;
     }
 
     resumeAutoSaveTimer();
