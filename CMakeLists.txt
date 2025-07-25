@@ -11,7 +11,7 @@ SET(
         "${CMAKE_SOURCE_DIR}/cmake/default_cxxflags.cmake"
 )
 
-SET(CMAKE_CXX_STANDARD 11)
+SET(CMAKE_CXX_STANDARD 20)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 IF(MSVC)
@@ -226,7 +226,7 @@ SET(STYLESHEETS_DIR_ABS "${CMAKE_INSTALL_PREFIX}/${STYLESHEETS_DIR_REL}")
 
 CONFIGURE_FILE(config.h.in ${CMAKE_BINARY_DIR}/config.h @ONLY)
 
-# Add qtmcp subdirectory (temporarily disabled due to build conflicts)
+# Add qtmcp subdirectory (temporarily disabled due to internal Qt build system conflicts)
 # ADD_SUBDIRECTORY(external/qtmcp)
 
 ADD_SUBDIRECTORY(src)

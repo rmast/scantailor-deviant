@@ -39,14 +39,11 @@
 #include <string.h>
 
 #include "CommandLine.h"
-#include <qtmcp/qtmcp.h>
+// MCP integration will be added when qtmcp build issues are resolved
 
 int main(int argc, char** argv)
 {
     Application app(argc, argv);
-
-    // Initialize qtmcp for exposing the UI
-    qtmcp::initialize();
 
 #ifdef _WIN32
     // Get rid of all references to Qt's installation directory.
