@@ -59,7 +59,7 @@ SET(output_filter_resource_files resources/output_filter_resources.qrc)
 SOURCE_GROUP("OutputFilterResources" FILES ${resource_files})
 
 ADD_LIBRARY(output STATIC ${sources} ${ui_sources})
-TARGET_LINK_LIBRARIES(output Qt5::Widgets Qt5::Xml)
+TARGET_LINK_LIBRARIES(output Qt6::Widgets Qt6::Xml)
 ADD_DEPENDENCIES(output toplevel_ui_sources)
 
 TRANSLATION_SOURCES(scantailor-deviant ${sources} ${ui_files})

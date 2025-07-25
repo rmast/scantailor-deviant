@@ -33,4 +33,4 @@ SET(
 SOURCE_GROUP("Sources" FILES ${sources})
 
 ADD_LIBRARY(dewarping STATIC ${sources})
-TARGET_LINK_LIBRARIES(dewarping Qt5::Widgets Qt5::Xml)
+TARGET_LINK_LIBRARIES(dewarping Qt6::Widgets Qt6::Xml)

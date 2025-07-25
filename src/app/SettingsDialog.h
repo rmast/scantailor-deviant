@@ -195,7 +195,7 @@ public:
     }
     const QList<Qt::Key> keys() const
     {
-        return m_keysPressed.toList();
+        return QList<Qt::Key>(m_keysPressed.begin(), m_keysPressed.end());
     }
 protected:
     bool eventFilter(QObject* obj, QEvent* event) override;

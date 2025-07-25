@@ -27,7 +27,7 @@ FrenetFrame::FrenetFrame(Vec2d const& origin, Vec2d const& tangent_vector, YAxis
 {
     double const sqlen = tangent_vector.squaredNorm();
     if (sqlen > 1e-6) {
-        m_unitTangent = tangent_vector / sqrt(sqlen);
+        m_unitTangent = tangent_vector * (1.0 / sqrt(sqlen));
         if (ydir == Y_POINTS_UP) {
             m_unitNormal[0] = -m_unitTangent[1];
             m_unitNormal[1] = m_unitTangent[0];

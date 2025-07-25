@@ -1,0 +1,3 @@
+[submodule "external/qtmcp"]
+	path = external/qtmcp
+	url = https://github.com/rmast/qtmcp

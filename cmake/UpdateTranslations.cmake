@@ -88,7 +88,8 @@ ENDMACRO()
 #
 MACRO(UPDATE_TRANSLATIONS_TARGET _target) #, _sets
 	SET(_commands "")
-        get_target_property(LUPDATE_LOC ${Qt5_LUPDATE_EXECUTABLE} IMPORTED_LOCATION)
+        # get_target_property(LUPDATE_LOC ${Qt6_LUPDATE_EXECUTABLE} IMPORTED_LOCATION)
+        find_program(LUPDATE_LOC lupdate HINTS ${Qt6_DIR}/../../../bin)
         FOREACH(_set ${ARGN})
 		LIST(
                         APPEND _commands COMMAND "${LUPDATE_LOC}" -locations absolute #-no-obsolete

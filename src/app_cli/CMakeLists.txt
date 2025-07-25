@@ -26,7 +26,7 @@ IF(OPENMP_FOUND)
 ENDIF()
 
 # Widgets module is used statically but not at runtime.
-TARGET_LINK_LIBRARIES(scantailor-deviant-cli Qt5::Widgets Qt5::Xml)
+TARGET_LINK_LIBRARIES(scantailor-deviant-cli Qt6::Widgets Qt6::Xml)
 
 IF(EXTRA_LIBS)
         TARGET_LINK_LIBRARIES(scantailor-deviant-cli ${EXTRA_LIBS})

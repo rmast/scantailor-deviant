@@ -12,5 +12,5 @@ SET(
 SOURCE_GROUP("Sources" FILES ${sources})
 
 ADD_LIBRARY(exporting STATIC ${sources})
-TARGET_LINK_LIBRARIES(exporting Qt5::Widgets)
+TARGET_LINK_LIBRARIES(exporting Qt6::Widgets)
 TRANSLATION_SOURCES(scantailor-deviant ${sources})

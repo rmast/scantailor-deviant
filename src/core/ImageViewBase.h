@@ -24,6 +24,7 @@
 #include "InteractionHandler.h"
 #include "InteractionState.h"
 #include "ImagePixmapUnion.h"
+#include "foundation/MultipleTargetsSupport.h"
 #include <QTimer>
 #include <QWidget>
 #include <QAbstractScrollArea>
@@ -302,7 +303,7 @@ protected:
 
     virtual void resizeEvent(QResizeEvent* event);
 
-    virtual void enterEvent(QEvent* event);
+    virtual void enterEvent(QEnterEventType* event);
 
     virtual void leaveEvent(QEvent* event);
 

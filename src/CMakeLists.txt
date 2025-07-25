@@ -25,7 +25,7 @@ FOREACH(ts_file ${ts_files})
         ENDIF("${ts_file}" MATCHES ".*untranslated.ts")
 ENDFOREACH(ts_file)
 
-QT5_ADD_TRANSLATION(QM_FILES ${FILTERED_TRANSLATION_FILES})
+qt6_add_translation(QM_FILES ${FILTERED_TRANSLATION_FILES})
 
 IF(WIN32 OR APPLE)
         # Just copy already compiled qtbase*.qm from translations folder

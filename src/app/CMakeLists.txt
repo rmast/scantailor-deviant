@@ -11,7 +11,7 @@ IF(WIN32)
 ENDIF()
 SOURCE_GROUP("Resources" FILES ${resource_files})
 
-QT5_ADD_RESOURCES(resource_sources resources/resources.qrc)
+qt6_add_resources(resource_sources resources/resources.qrc)
 SOURCE_GROUP("Generated" FILES ${resource_sources})
 
 IF(CANBERRA_FOUND)
@@ -113,7 +113,7 @@ ADD_DEPENDENCIES(scantailor-deviant fix_orientation page_split deskew select_con
         dewarping zones interaction imageproc math foundation)
 
 
-TARGET_LINK_LIBRARIES(scantailor-deviant Qt5::Widgets Qt5::Xml Qt5::Svg ${MAYBE_QT_OPENGL_MODULE})
+TARGET_LINK_LIBRARIES(scantailor-deviant Qt6::Widgets Qt6::Xml Qt6::Svg ${MAYBE_QT_OPENGL_MODULE})
 
 IF(EXTRA_LIBS)
         TARGET_LINK_LIBRARIES(scantailor-deviant ${EXTRA_LIBS})

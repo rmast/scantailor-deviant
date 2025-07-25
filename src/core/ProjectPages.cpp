@@ -373,7 +373,7 @@ struct File {
 
     operator ImageFileInfo() const
     {
-        return ImageFileInfo(fileName, metadata);
+        return ImageFileInfo(QFileInfo(fileName), metadata);
     }
 };
 

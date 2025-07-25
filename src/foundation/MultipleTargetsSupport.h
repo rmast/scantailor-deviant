@@ -19,8 +19,10 @@
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
 static const QString::SplitBehavior QStringSkipEmptyParts = QString::SkipEmptyParts;
+static const QString::SplitBehavior QStringKeepEmptyParts = QString::KeepEmptyParts;
 #else
 static const Qt::SplitBehavior QStringSkipEmptyParts = Qt::SkipEmptyParts;
+static const Qt::SplitBehavior QStringKeepEmptyParts = Qt::KeepEmptyParts;
 #endif
 
 static inline int QLineIntersect(const QLineF &line1, const QLineF &line2, QPointF *intersectionPoint) {
@@ -87,5 +89,14 @@ static inline qint64 QDateTimeToSecsSinceEpoch(const QDateTime &datetime)
     return datetime.toSecsSinceEpoch();
 #endif
 }
+
+// Forward declarations for Qt6 compatibility
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+class QEnterEvent;
+#define QEnterEventType QEnterEvent
+#else
+class QEvent;
+#define QEnterEventType QEvent
+#endif
 
 #endif

@@ -18,6 +18,8 @@
 
 #include "FixDpiDialog.h"
 
+#include "foundation/MultipleTargetsSupport.h"
+
 #include <QAbstractItemModel>
 #include <QSortFilterProxyModel>
 #include <QModelIndex>
@@ -246,7 +248,7 @@ FixDpiDialog::FixDpiDialog(std::vector<ImageFileInfo> const& files, QWidget* par
     m_errorPalette = m_normalPalette;
     m_errorPalette.setColor(QPalette::Text, Qt::red);
 
-    const QStringList sl = QSettings().value(_key_dpi_predefined_list, _key_dpi_predefined_list_def).toString().split(',', QString::KeepEmptyParts);
+    const QStringList sl = QSettings().value(_key_dpi_predefined_list, _key_dpi_predefined_list_def).toString().split(',', QStringKeepEmptyParts);
     for (QString const& s : sl) {
         const QStringList nums = s.split('x');
         bool ok = nums.count() >= 2;

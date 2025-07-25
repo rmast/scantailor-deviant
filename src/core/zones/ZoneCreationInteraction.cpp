@@ -390,7 +390,7 @@ ZoneCreationInteraction::onMouseDoubleClickEvent(QMouseEvent* event, Interaction
 {
     if (GlobalStaticSettings::checkModifiersMatch(ZoneClone, event->modifiers()) &&
             LocalClipboard::getInstance()->lastZoneIsValid()) {
-        LocalClipboard::getInstance()->repeatLastZone(m_rContext, event->localPos());
+        LocalClipboard::getInstance()->repeatLastZone(m_rContext, event->position());
     }
 }
 

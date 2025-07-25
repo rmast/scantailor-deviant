@@ -29,7 +29,7 @@ SET(
 )
 
 ADD_EXECUTABLE(imageproc_tests ${sources})
-TARGET_LINK_LIBRARIES(imageproc_tests Qt5::Widgets Qt5::Xml)
+TARGET_LINK_LIBRARIES(imageproc_tests Qt6::Widgets Qt6::Xml)
 TARGET_LINK_LIBRARIES(imageproc_tests ${libs})
 
 # We want the executable located where we copy all the DLLs.

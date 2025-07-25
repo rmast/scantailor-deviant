@@ -122,10 +122,10 @@ Place::createRotatedPlane(double min_quality) const
     QLineF const img_bound_line_1(m_img_pt_01, img_bound_pt_01);
     QLineF const img_bound_line_2(m_img_pt_11, img_bound_pt_11);
 
-    QPointF img_offset_pt1x1; img_offset_line_1.intersect(img_bound_line_1, &img_offset_pt1x1);
-    QPointF img_offset_pt1x2; img_offset_line_1.intersect(img_bound_line_2, &img_offset_pt1x2);
-    QPointF img_offset_pt2x1; img_offset_line_2.intersect(img_bound_line_1, &img_offset_pt2x1);
-    QPointF img_offset_pt2x2; img_offset_line_2.intersect(img_bound_line_2, &img_offset_pt2x2);
+    QPointF img_offset_pt1x1; img_offset_line_1.intersects(img_bound_line_1, &img_offset_pt1x1);
+    QPointF img_offset_pt1x2; img_offset_line_1.intersects(img_bound_line_2, &img_offset_pt1x2);
+    QPointF img_offset_pt2x1; img_offset_line_2.intersects(img_bound_line_1, &img_offset_pt2x1);
+    QPointF img_offset_pt2x2; img_offset_line_2.intersects(img_bound_line_2, &img_offset_pt2x2);
 
     boost::array<std::pair<QPointF, QPointF>, 4> const img2mdl_pairs = {
         std::make_pair(m_img_pt_01, QPointF(0, 0)),

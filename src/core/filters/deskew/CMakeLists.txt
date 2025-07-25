@@ -35,6 +35,6 @@ FILE(GLOB ui_files "ui/*.ui")
 SOURCE_GROUP("UI Files" FILES ${ui_files})
 
 ADD_LIBRARY(deskew STATIC ${sources} ${ui_sources})
-TARGET_LINK_LIBRARIES(deskew Qt5::Widgets Qt5::Xml)
+TARGET_LINK_LIBRARIES(deskew Qt6::Widgets Qt6::Xml)
 
 TRANSLATION_SOURCES(scantailor-deviant ${sources} ${ui_files})

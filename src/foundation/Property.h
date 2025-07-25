@@ -21,6 +21,7 @@
 
 #include "RefCountable.h"
 #include "IntrusivePtr.h"
+#include <QString>
 
 class QDomDocument;
 class QDomElement;

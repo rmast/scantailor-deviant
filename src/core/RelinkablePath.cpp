@@ -17,6 +17,7 @@
 */
 
 #include "RelinkablePath.h"
+#include "foundation/MultipleTargetsSupport.h"
 #include <QStringList>
 
 RelinkablePath::RelinkablePath(QString const& path, Type type)
@@ -32,7 +33,7 @@ RelinkablePath::normalize(QString const& path)
     front_slashes.replace(QChar('\\'), QLatin1String("/"));
 
     QStringList new_components;
-    const QStringList components = front_slashes.split(QChar('/'), QString::KeepEmptyParts);
+    const QStringList components = front_slashes.split(QChar('/'), QStringKeepEmptyParts);
     for (QString const& comp : components) {
         if (comp.isEmpty()) {
             if (new_components.isEmpty()

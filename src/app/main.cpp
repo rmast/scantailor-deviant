@@ -39,11 +39,14 @@
 #include <string.h>
 
 #include "CommandLine.h"
+// #include <qtmcp/qtmcp.h> // Temporarily disabled until qtmcp is properly integrated
 
 int main(int argc, char** argv)
 {
-
     Application app(argc, argv);
+
+    // Initialize qtmcp for exposing the UI
+    // qtmcp::initialize(); // Temporarily disabled until qtmcp is properly integrated
 
 #ifdef _WIN32
     // Get rid of all references to Qt's installation directory.

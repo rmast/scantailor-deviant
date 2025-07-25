@@ -96,20 +96,17 @@ OPTION(ENABLE_OPENGL "OpenGL may be used for UI acceleration" ${use_opengl})
 SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTOUIC ON)
 
-SET(Qt_MIN_VERSION 5.7.0)
-IF(APPLE)
-   # Not used but required for loading cocoa plugin
-   FIND_PACKAGE(Qt5PrintSupport ${Qt_MIN_VERSION} REQUIRED)
-ENDIF(APPLE)
-FIND_PACKAGE(Qt5Core ${Qt_MIN_VERSION} REQUIRED)
-FIND_PACKAGE(Qt5Gui ${Qt_MIN_VERSION} REQUIRED)
-FIND_PACKAGE(Qt5Widgets ${Qt_MIN_VERSION} REQUIRED)
-FIND_PACKAGE(Qt5Xml ${Qt_MIN_VERSION} REQUIRED)
-FIND_PACKAGE(Qt5Network ${Qt_MIN_VERSION} REQUIRED)
-FIND_PACKAGE(Qt5Svg ${Qt_MIN_VERSION} REQUIRED)
-FIND_PACKAGE(Qt5LinguistTools ${Qt_MIN_VERSION} REQUIRED)
+SET(Qt_MIN_VERSION 6.8.1)
+FIND_PACKAGE(Qt6Core ${Qt_MIN_VERSION} REQUIRED)
+FIND_PACKAGE(Qt6Gui ${Qt_MIN_VERSION} REQUIRED)
+FIND_PACKAGE(Qt6Widgets ${Qt_MIN_VERSION} REQUIRED)
+FIND_PACKAGE(Qt6Xml ${Qt_MIN_VERSION} REQUIRED)
+FIND_PACKAGE(Qt6Network ${Qt_MIN_VERSION} REQUIRED)
+FIND_PACKAGE(Qt6Svg ${Qt_MIN_VERSION} REQUIRED)
+#FIND_PACKAGE(Qt6 ${Qt_MIN_VERSION} COMPONENTS LinguistTools QUIET)
+FIND_PACKAGE(Qt6 ${Qt_MIN_VERSION} REQUIRED COMPONENTS LinguistTools)
 IF(ENABLE_OPENGL)
-        FIND_PACKAGE(Qt5OpenGL ${Qt_MIN_VERSION} REQUIRED)
+        FIND_PACKAGE(Qt6OpenGL ${Qt_MIN_VERSION} REQUIRED)
 ENDIF()
 
 SET(EXTRA_LIBS "")
@@ -208,7 +205,7 @@ ENDIF(WIN32)
 SET(MAYBE_QT_OPENGL_MODULE "")
 IF(ENABLE_OPENGL)
         LIST(APPEND EXTRA_LIBS ${OPENGL_LIBRARIES})
-        SET(MAYBE_QT_OPENGL_MODULE Qt5::OpenGL)
+        SET(MAYBE_QT_OPENGL_MODULE Qt6::OpenGL)
 ENDIF()
 
 # Prepare config.h
@@ -229,6 +226,8 @@ SET(STYLESHEETS_DIR_ABS "${CMAKE_INSTALL_PREFIX}/${STYLESHEETS_DIR_REL}")
 
 CONFIGURE_FILE(config.h.in ${CMAKE_BINARY_DIR}/config.h @ONLY)
 
+# Add qtmcp subdirectory (temporarily disabled due to build conflicts)
+# ADD_SUBDIRECTORY(external/qtmcp)
 
 ADD_SUBDIRECTORY(src)
 
@@ -245,14 +244,14 @@ IF(WIN32)
 
         # Install Qt
         SET(
-                qt5_libs
-                ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES}
-                ${Qt5Core_LIBRARIES} ${Qt5Xml_LIBRARIES}  ${Qt5Svg_LIBRARIES}
+                qt6_libs
+                ${Qt6Widgets_LIBRARIES} ${Qt6Gui_LIBRARIES}
+                ${Qt6Core_LIBRARIES} ${Qt6Xml_LIBRARIES}  ${Qt6Svg_LIBRARIES}
         )
         IF(ENABLE_OPENGL)
-                LIST(APPEND qt5_libs ${Qt5OpenGL_LIBRARIES})
+                LIST(APPEND qt6_libs ${Qt6OpenGL_LIBRARIES})
         ENDIF()
-        FOREACH(target ${qt5_libs})
+        FOREACH(target ${qt6_libs})
                 GET_TARGET_PROPERTY(debug_loc "${target}" LOCATION_DEBUG)
                 GET_TARGET_PROPERTY(release_loc "${target}" LOCATION_RELEASE)
                 install(FILES "${debug_loc}"   DESTINATION . CONFIGURATIONS Debug)
@@ -260,8 +259,8 @@ IF(WIN32)
         ENDFOREACH()
 
         # Install Qt's plugins.
-        CMAKE_PATH(SET Qt5_DIR NORMALIZE "${Qt5Core_DIR}/../../..")
-        CMAKE_PATH(APPEND Qt5_DIR "plugins" OUTPUT_VARIABLE PLUGINS_DIR)
+        CMAKE_PATH(SET Qt6_DIR NORMALIZE "${Qt6Core_DIR}/../../..")
+        CMAKE_PATH(APPEND Qt6_DIR "plugins" OUTPUT_VARIABLE PLUGINS_DIR)
 
         # Install system plugin
         install(FILES "${PLUGINS_DIR}/platforms/qwindows.dll"  DESTINATION platforms CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
@@ -296,7 +295,7 @@ IF(WIN32)
 
         # Install Qt's translations
         FOREACH(qm_file ${QM_FILES})
-                STRING(REGEX REPLACE "^.*scantailor-deviant_" "${Qt5_DIR}translations/qtbase_" qtbase_qm_file "${qm_file}")
+                STRING(REGEX REPLACE "^.*scantailor-deviant_" "${Qt6_DIR}translations/qtbase_" qtbase_qm_file "${qm_file}")
                 IF(EXISTS "${qtbase_qm_file}")
                         INSTALL(FILES "${qtbase_qm_file}" DESTINATION translations)
                 ENDIF()
@@ -393,22 +392,22 @@ ELSEIF(APPLE)
         install(DIRECTORY "${CMAKE_SOURCE_DIR}/src/stylesheets"
                 DESTINATION scantailor-deviant.app/Contents/Resources)
 
-        CMAKE_PATH(SET QT5_PLUGINS_DIR NORMALIZE ${Qt5Core_DIR}/../../../plugins)
+        CMAKE_PATH(SET QT6_PLUGINS_DIR NORMALIZE ${Qt6Core_DIR}/../../../plugins)
         set(PLUGINS_DESTINATION scantailor-deviant.app/Contents/PlugIns)
 
-        INSTALL(FILES ${QT5_PLUGINS_DIR}/platforms/libqcocoa.dylib    DESTINATION ${PLUGINS_DESTINATION}/platforms)
+        INSTALL(FILES ${QT6_PLUGINS_DIR}/platforms/libqcocoa.dylib    DESTINATION ${PLUGINS_DESTINATION}/platforms)
 
-        INSTALL(FILES ${QT5_PLUGINS_DIR}/styles/libqmacstyle.dylib    DESTINATION ${PLUGINS_DESTINATION}/styles)
+        INSTALL(FILES ${QT6_PLUGINS_DIR}/styles/libqmacstyle.dylib    DESTINATION ${PLUGINS_DESTINATION}/styles)
 
-        INSTALL(FILES ${QT5_PLUGINS_DIR}/imageformats/libqico.dylib   DESTINATION ${PLUGINS_DESTINATION}/imageformats)
-        INSTALL(FILES ${QT5_PLUGINS_DIR}/imageformats/libqjpeg.dylib  DESTINATION ${PLUGINS_DESTINATION}/imageformats)
-        INSTALL(FILES ${QT5_PLUGINS_DIR}/imageformats/libqsvg.dylib   DESTINATION ${PLUGINS_DESTINATION}/imageformats)
-        INSTALL(FILES ${QT5_PLUGINS_DIR}/imageformats/libqtiff.dylib  DESTINATION ${PLUGINS_DESTINATION}/imageformats)
+        INSTALL(FILES ${QT6_PLUGINS_DIR}/imageformats/libqico.dylib   DESTINATION ${PLUGINS_DESTINATION}/imageformats)
+        INSTALL(FILES ${QT6_PLUGINS_DIR}/imageformats/libqjpeg.dylib  DESTINATION ${PLUGINS_DESTINATION}/imageformats)
+        INSTALL(FILES ${QT6_PLUGINS_DIR}/imageformats/libqsvg.dylib   DESTINATION ${PLUGINS_DESTINATION}/imageformats)
+        INSTALL(FILES ${QT6_PLUGINS_DIR}/imageformats/libqtiff.dylib  DESTINATION ${PLUGINS_DESTINATION}/imageformats)
 
-        CMAKE_PATH(SET Qt5_DIR NORMALIZE "${Qt5Core_DIR}/../../..")
+        CMAKE_PATH(SET Qt6_DIR NORMALIZE "${Qt6Core_DIR}/../../..")
 
         FOREACH(qm_file ${QM_FILES})
-                STRING(REGEX REPLACE "^.*scantailor-deviant_" "${Qt5_DIR}translations/qtbase_" qtbase_qm_file "${qm_file}")
+                STRING(REGEX REPLACE "^.*scantailor-deviant_" "${Qt6_DIR}translations/qtbase_" qtbase_qm_file "${qm_file}")
                 IF(EXISTS "${qtbase_qm_file}")
                         INSTALL(FILES "${qtbase_qm_file}" DESTINATION "scantailor-deviant.app/Contents/Resources/translations")
                 ENDIF()

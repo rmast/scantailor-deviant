@@ -20,6 +20,7 @@
 
 #include "RelinkablePath.h"
 #include "QtSignalForwarder.h"
+#include "foundation/MultipleTargetsSupport.h"
 #include <QHBoxLayout>
 #include <QLayoutItem>
 #include <QStringList>
@@ -62,7 +63,7 @@ RelinkablePathVisualization::RelinkablePathVisualization(QWidget* parent)
     ,   m_pLayout(new QHBoxLayout(this))
 {
     m_pLayout->setSpacing(0);
-    m_pLayout->setMargin(0);
+    m_pLayout->setContentsMargins(0, 0, 0, 0);
 }
 
 void
@@ -82,7 +83,7 @@ RelinkablePathVisualization::setPath(RelinkablePath const& path, bool clickable)
 {
     clear();
 
-    QStringList components(path.normalizedPath().split(QChar('/'), QString::SkipEmptyParts));
+    QStringList components(path.normalizedPath().split(QChar('/'), QStringSkipEmptyParts));
     if (components.empty()) {
         return;
     }

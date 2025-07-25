@@ -654,7 +654,7 @@ ImageViewBase::setLastCursorPos(const QPointF& pos)
 void
 ImageViewBase::mouseMoveEvent(QMouseEvent* event)
 {
-    setLastCursorPos(event->localPos());
+    setLastCursorPos(event->position());
 
     m_interactionState.resetProximity();
     if (!m_interactionState.captured()) {
@@ -735,7 +735,7 @@ ImageViewBase::resizeEvent(QResizeEvent* event)
 }
 
 void
-ImageViewBase::enterEvent(QEvent* event)
+ImageViewBase::enterEvent(QEnterEventType* event)
 {
     viewport()->setFocus();
     QAbstractScrollArea::enterEvent(event);

@@ -2194,7 +2194,7 @@ MainWindow::showAboutDialog()
     ui.setupUi(dialog);
     ui.tabWidget->setCurrentIndex(0); // in case I forget to switch it back in UI Designer
     ui.version->setText(QString::fromUtf8(VERSION) + "\n" + tr("build on ") +
-                        QDate(BUILD_YEAR, BUILD_MONTH, BUILD_DAY).toString(Qt::SystemLocaleShortDate));
+                        QDate(BUILD_YEAR, BUILD_MONTH, BUILD_DAY).toString(Qt::TextDate));
 
     QResource license(":/GPLv3.html");
     ui.licenseViewer->setHtml(QString::fromUtf8((char const*)license.data(), license.size()));
@@ -2523,7 +2523,7 @@ MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, ImageId const& e
     protected:
         virtual bool filterAcceptsRow(int source_row, QModelIndex const& source_parent) const override
         {
-            QModelIndex const idx(source_parent.child(source_row, 0));
+            QModelIndex const idx(sourceModel()->index(source_row, 0, source_parent));
             QVariant const data(idx.data(QFileSystemModel::FilePathRole));
             if (data.isNull()) {
                 return true;
@@ -2564,7 +2564,15 @@ MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, ImageId const& e
 
     // The order of items returned by QFileDialog is platform-dependent,
     // so we enforce our own ordering.
-    std::sort(files.begin(), files.end(), SmartFilenameOrdering());
+    QList<QFileInfo> file_infos;
+    for (const QString& file : files) {
+        file_infos.append(QFileInfo(file));
+    }
+    std::sort(file_infos.begin(), file_infos.end(), SmartFilenameOrdering());
+    files.clear();
+    for (const QFileInfo& info : file_infos) {
+        files.append(info.absoluteFilePath());
+    }
 
     // I suspect on some platforms it may be possible to select the same file twice,
     // so to be safe, remove duplicates.

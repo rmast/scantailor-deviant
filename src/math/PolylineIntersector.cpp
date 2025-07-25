@@ -118,7 +118,7 @@ PolylineIntersector::intersectWithSegment(QLineF const& line, int segment) const
 {
     QLineF const seg_line(m_polyline[segment], m_polyline[segment + 1]);
     QPointF intersection;
-    if (line.intersect(seg_line, &intersection) == QLineF::NoIntersection) {
+    if (line.intersects(seg_line, &intersection) == QLineF::NoIntersection) {
         // Considering we were called for a reason, the segment must
         // be on the same line as our subject line.  Just return segment
         // midpoint in this case.

@@ -23,6 +23,7 @@
 #include "RefCountable.h"
 #include "IntrusivePtr.h"
 #include <boost/intrusive/list.hpp>
+#include <QtGlobal>
 
 class InteractionState;
 class QPainter;

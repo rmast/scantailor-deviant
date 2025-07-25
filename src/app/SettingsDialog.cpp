@@ -21,6 +21,8 @@
 #include "OpenGLSupport.h"
 #include "config.h"
 #include "imageproc/Constants.h"
+#include "foundation/MultipleTargetsSupport.h"
+#include <QRegularExpression>
 #include <QVariant>
 #include <QDir>
 #include <QDebug>
@@ -263,7 +265,7 @@ SettingsDialog::populateTreeWidget(QTreeWidget* treeWidget)
                                            <<        tr("Despeckling")
                                            <<        tr("Image metadata");
     const QResource tree_metadata(":/SettingsTreeData.tsv");
-    QStringList tree_data = QString::fromUtf8((char const*)tree_metadata.data(), tree_metadata.size()).split(QRegExp("\r?\n"));
+    QStringList tree_data = QString::fromUtf8((char const*)tree_metadata.data(), tree_metadata.size()).split(QRegularExpression("\r?\n"));
 
     QTreeWidgetItem* last_top_item = nullptr;
     QTreeWidgetItem* parent_item = nullptr;
@@ -277,11 +279,11 @@ SettingsDialog::populateTreeWidget(QTreeWidget* treeWidget)
 
     for (QString const& name : settingsTreeTitles) {
 
-        QStringList metadata = tree_data[idx++].split('\t', QString::KeepEmptyParts);
+        QStringList metadata = tree_data[idx++].split('\t', QStringKeepEmptyParts);
         Q_ASSERT(!metadata.isEmpty());
 
         int level = 0;
-        int item_text_width = item_indentation + fm.width(name);
+        int item_text_width = item_indentation + fm.horizontalAdvance(name);
 
         while (metadata[level++].isEmpty()) {
             item_text_width += item_indentation;
@@ -326,7 +328,7 @@ SettingsDialog::populateTreeWidget(QTreeWidget* treeWidget)
 
     max_text_width = std::max(max_text_width + 20, 200);
     treeWidget->setColumnWidth(0, max_text_width);
-    treeWidget->setColumnWidth(1, fm.width(treeWidget->headerItem()->text(1)) + 20);
+    treeWidget->setColumnWidth(1, fm.horizontalAdvance(treeWidget->headerItem()->text(1)) + 20);
 
     treeWidget->blockSignals(false);
 
@@ -374,7 +376,7 @@ void conditionalExpand(QTreeWidgetItem* item, int& idx, const QStringList& state
 
 void SettingsDialog::restoreSettingsTreeState(QTreeWidget* treeWidget)
 {
-    QStringList tree_expand_state = m_settings.value(_key_app_settings_tree_state).toString().split(',', QString::KeepEmptyParts);
+    QStringList tree_expand_state = m_settings.value(_key_app_settings_tree_state).toString().split(',', QStringKeepEmptyParts);
     int idx = 0;
     for (int i = 0; i < treeWidget->topLevelItemCount(); i++) {
         conditionalExpand(treeWidget->topLevelItem(i), idx, tree_expand_state);
@@ -850,7 +852,7 @@ QHotKeyInputDialog::QHotKeyInputDialog(const KeyType& editor_type, QWidget* pare
 void QHotKeyInputDialog::updateLabel()
 {
     setTextValue( QHotKeys::hotkeysToString(m_modifiersPressed,
-                                            m_keysPressed.toList()) );
+                                            QList<Qt::Key>(m_keysPressed.begin(), m_keysPressed.end())) );
 }
 
 void QHotKeyInputDialog::keyPressEvent(QKeyEvent* event)

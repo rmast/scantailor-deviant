@@ -23,6 +23,7 @@
 #include <QDataStream>
 #include <QDomDocument>
 #include <QDomElement>
+#include <QIODevice>
 
 namespace dewarping
 {
