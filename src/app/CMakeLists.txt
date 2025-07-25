@@ -28,6 +28,7 @@ SET(
         RelinkingModel.cpp RelinkingModel.h
         RelinkingSortingModel.cpp RelinkingSortingModel.h
         RelinkingListView.cpp RelinkingListView.h
+        SimpleMcp.cpp SimpleMcp.h
         RelinkingDialog.cpp RelinkingDialog.h
         SettingsDialog.cpp SettingsDialog.h
         FixDpiDialog.cpp FixDpiDialog.h

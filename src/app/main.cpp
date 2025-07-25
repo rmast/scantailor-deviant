@@ -39,7 +39,7 @@
 #include <string.h>
 
 #include "CommandLine.h"
-// MCP integration will be added when qtmcp build issues are resolved
+#include "SimpleMcp.h"
 
 int main(int argc, char** argv)
 {
@@ -85,6 +85,13 @@ int main(int argc, char** argv)
 
     MainWindow* main_wnd = new MainWindow();
     main_wnd->setAttribute(Qt::WA_DeleteOnClose);
+
+    // Simple MCP server for UI introspection (alternative to qtmcp)
+    SimpleMcp* mcpServer = nullptr;
+    if (qEnvironmentVariableIsSet("SCANTAILOR_MCP_ENABLE")) {
+        mcpServer = new SimpleMcp(&app);
+        mcpServer->start();
+    }
 
     QObject::connect(main_wnd, &MainWindow::settingsUpdateRequest, CommandLine::updateSettings);
 
