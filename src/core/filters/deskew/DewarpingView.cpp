@@ -5,7 +5,23 @@
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    (at your option) any laQList<QPointF> DewaQList<QPointF> DewarpingView::getBottomSplineAnchors() const
+{
+    QList<QPointF> anchors;
+    int numPoints = m_bottomSpline.spline().numControlPoints();
+    for (int i = 0; i < numPoints; ++i) {
+        anchors.append(m_bottomSpline.spline().controlPointPosition(i));
+    }
+    return anchors;
+}::getTopSplineAnchors() const
+{
+    QList<QPointF> anchors;
+    int numPoints = m_topSpline.spline().numControlPoints();
+    for (int i = 0; i < numPoints; ++i) {
+        anchors.append(m_topSpline.spline().controlPointPosition(i));
+    }
+    return anchors;
+}on.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -385,6 +401,41 @@ QPointF
 DewarpingView::widgetToSource(QPointF const& pt) const
 {
     return virtualToImage().map(widgetToVirtual().map(pt));
+}
+
+// MCP Integration: Implementation of public accessor methods for spline data
+QList<QPointF>
+DewarpingView::getTopSplineAnchors() const
+{
+    QList<QPointF> anchors;
+    int numPoints = m_topSpline.spline().numControlPoints();
+    for (int i = 0; i < numPoints; ++i) {
+        anchors.append(m_topSpline.spline().controlPointPosition(i));
+    }
+    return anchors;
+}
+
+QList<QPointF>
+DewarpingView::getBottomSplineAnchors() const
+{
+    QList<QPointF> anchors;
+    int numPoints = m_bottomSpline.spline().numControlPoints();
+    for (int i = 0; i < numPoints; ++i) {
+        anchors.append(m_bottomSpline.spline().controlPointPosition(i));
+    }
+    return anchors;
+}
+
+int
+DewarpingView::getTopSplinePointCount() const
+{
+    return m_topSpline.spline().numControlPoints();
+}
+
+int
+DewarpingView::getBottomSplinePointCount() const
+{
+    return m_bottomSpline.spline().numControlPoints();
 }
 
 } // namespace deskew

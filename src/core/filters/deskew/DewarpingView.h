@@ -60,6 +60,19 @@ public slots:
     void frameParamsChanged(dewarping::FrameParams const& frame_params);
 
     void bendParamsChanged(dewarping::BendParams const& bend_params);
+
+public:
+    // MCP Integration: Public accessor methods for spline data
+    dewarping::DistortionModel const& getDistortionModel() const { return m_distortionModel; }
+    InteractiveXSpline const& getTopSpline() const { return m_topSpline; }
+    InteractiveXSpline const& getBottomSpline() const { return m_bottomSpline; }
+    
+    // Get anchor point coordinates
+    Q_INVOKABLE QList<QPointF> getTopSplineAnchors() const;
+    Q_INVOKABLE QList<QPointF> getBottomSplineAnchors() const;
+    Q_INVOKABLE int getTopSplinePointCount() const;
+    Q_INVOKABLE int getBottomSplinePointCount() const;
+
 protected:
     virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 private:

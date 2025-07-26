@@ -1,9 +1,17 @@
 #pragma once
 
 #include <QtCore/QObject>
+#include <QtCore/QIODevice>
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonDocument>
+#include <QtCore/QJsonArray>
 #include <QtCore/QTimer>
+#include <QtCore/QTextStream>
+#include <QtCore/QDateTime>
+#include <QtCore/QEvent>
+#include <QtGui/QMouseEvent>
+#include <QtNetwork/QTcpServer>
+#include <QtNetwork/QTcpSocket>
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QApplication>
 #include <QtCore/QMetaProperty>
@@ -28,9 +36,21 @@ public:
     // Start the MCP server (stdio protocol)
     void start();
     
+    // Execute a single MCP command and return result (for on-demand use)
+    QString executeCommand(const QString& jsonRpcCall);
+    
+    // Get the port number for TCP connections
+    quint16 getPort() const { return m_tcpPort; }
+
+protected:
+    // Event filter to capture UI interactions during recording
+    bool eventFilter(QObject* watched, QEvent* event) override;
+    
 private slots:
     void processStdinInput();
     void sendResponse(const QJsonObject& response);
+    void onNewConnection();
+    void onSocketDataReady();
     
 private:
     // Core MCP capabilities
@@ -39,6 +59,14 @@ private:
     QJsonObject handleGetProperty(const QString& objectPath, const QString& property);
     QJsonObject handleSetProperty(const QString& objectPath, const QString& property, const QJsonValue& value);
     QJsonObject handleFindWidget(const QString& className, const QString& objectName = QString());
+    QJsonObject handleCountSplinePoints(); // New function to count dewarping spline points
+    QJsonObject handleAnalyzeViewportSplines(); // Analyze splines using viewport and mouse positions
+    QJsonObject handleGetSplineAnchors(); // Get actual coordinates of spline anchor points
+    
+    // Recording functionality
+    QJsonObject handleStartRecording();
+    QJsonObject handleStopRecording();
+    QJsonObject handleGetRecording();
     
     // Utility functions
     QWidget* findWidgetByPath(const QString& path);
@@ -48,4 +76,14 @@ private:
     
     QTimer* m_stdinTimer;
     bool m_serverRunning;
+    
+    // TCP Server for network connections
+    QTcpServer* m_tcpServer;
+    quint16 m_tcpPort;
+    QList<QTcpSocket*> m_clients;
+    
+    // Recording state
+    bool m_recording;
+    QJsonArray m_recordedActions;
+    void recordAction(const QString& action, const QJsonObject& details);
 };

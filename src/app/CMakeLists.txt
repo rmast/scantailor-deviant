@@ -114,7 +114,7 @@ ADD_DEPENDENCIES(scantailor-deviant fix_orientation page_split deskew select_con
         dewarping zones interaction imageproc math foundation)
 
 
-TARGET_LINK_LIBRARIES(scantailor-deviant Qt6::Widgets Qt6::Xml Qt6::Svg ${MAYBE_QT_OPENGL_MODULE})
+TARGET_LINK_LIBRARIES(scantailor-deviant Qt6::Widgets Qt6::Xml Qt6::Svg Qt6::Network ${MAYBE_QT_OPENGL_MODULE})
 
 IF(EXTRA_LIBS)
         TARGET_LINK_LIBRARIES(scantailor-deviant ${EXTRA_LIBS})

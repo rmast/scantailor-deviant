@@ -91,6 +91,27 @@ int main(int argc, char** argv)
     if (qEnvironmentVariableIsSet("SCANTAILOR_MCP_ENABLE")) {
         mcpServer = new SimpleMcp(&app);
         mcpServer->start();
+        
+        // Show the TCP port for easy connection
+        qDebug() << "=== SimpleMCP Server Ready ===";
+        qDebug() << "TCP Port:" << mcpServer->getPort();
+        qDebug() << "Connect with: echo '{\"jsonrpc\":\"2.0\",\"method\":\"tools/call\",\"params\":{\"name\":\"count_spline_points\",\"arguments\":{}},\"id\":\"1\"}' | nc localhost" << mcpServer->getPort();
+        qDebug() << "===============================";
+        
+        // For GUI mode, you can test MCP functions by setting environment variable
+        // SCANTAILOR_MCP_TEST to execute a specific command
+        if (qEnvironmentVariableIsSet("SCANTAILOR_MCP_TEST")) {
+            QString testCommand = qEnvironmentVariable("SCANTAILOR_MCP_TEST");
+            if (testCommand.isEmpty()) {
+                testCommand = R"({"jsonrpc":"2.0","method":"tools/call","params":{"name":"count_spline_points","arguments":{}},"id":"test1"})";
+            }
+            
+            // Use a timer to execute the test after the GUI is fully loaded
+            QTimer::singleShot(2000, [mcpServer, testCommand]() {
+                QString result = mcpServer->executeCommand(testCommand);
+                qDebug() << "MCP Test Result:" << result;
+            });
+        }
     }
 
     QObject::connect(main_wnd, &MainWindow::settingsUpdateRequest, CommandLine::updateSettings);
