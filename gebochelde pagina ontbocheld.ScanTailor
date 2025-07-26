@@ -1,0 +1,158 @@
+<project outputDirectory="/qlc/rmast/grijstintenplaatjes/out/Excerptor/out" layoutDirection="LTR">
+  <scantailor ver="0.2.15" app="Deviant"/>
+  <directories>
+    <directory id="1" path="/qlc/rmast/grijstintenplaatjes/out/Excerptor"/>
+  </directories>
+  <files>
+    <file dirId="1" id="2" name="Scan_20250618 (8)_1L.tif"/>
+  </files>
+  <images>
+    <image fileId="2" fileImage="0" id="3" subPages="1">
+      <size width="6233" height="9592"/>
+      <dpi horizontal="1200" vertical="1200"/>
+      <grayscale value="1"/>
+    </image>
+  </images>
+  <pages>
+    <page subPage="single" selected="selected" imageId="3" id="4"/>
+  </pages>
+  <file-name-disambiguation>
+    <mapping file="2" label="0" page="0"/>
+  </file-name-disambiguation>
+  <filters>
+    <fix-orientation/>
+    <page-split defaultLayoutType="auto-detect">
+      <image id="3" layoutType="single-uncut">
+        <params mode="auto">
+          <pages type="single-uncut">
+            <outline>
+              <point y="0" x="0"/>
+              <point y="0" x="6233"/>
+              <point y="9592" x="6233"/>
+              <point y="9592" x="0"/>
+              <point y="0" x="0"/>
+            </outline>
+          </pages>
+          <dependencies>
+            <rotation degrees="0"/>
+            <size width="6233" height="9592"/>
+            <layoutType>auto-detect</layoutType>
+          </dependencies>
+          <original_dpi horizontal="300" vertical="300"/>
+        </params>
+      </image>
+    </page-split>
+    <deskew>
+      <page id="4">
+        <params distortionType="warp">
+          <rotation angle="0" mode="auto"/>
+          <warp mode="manual">
+            <distortion-model>
+              <top-curve>
+                <xspline>
+                  <point y="428.5884612093063" x="920.9702226640975"/>
+                  <point y="432.1123970893959" x="2673.033630456278"/>
+                  <point y="471.7472317574717" x="3243.97725500235"/>
+                  <point y="503.1132212413243" x="3984.633896062921"/>
+                  <point y="503.0474900504991" x="4295.306391937768"/>
+                  <point y="473.287375511066" x="4796.182160938605"/>
+                  <point y="443.0583442194502" x="5132.622809344807"/>
+                  <point y="428.8822028012512" x="5376.661480198828"/>
+                  <point y="433.7554587587042" x="5655.36521026327"/>
+                </xspline>
+                <polyline>GD5mRFNL1kPgU85EopTXQ3ld8USsRthDEMUGRbAM2UPcxxFFAfTZQ+PCGkXBENtDmKoiRTdw3ENGASpFuxzeQ5zwMEWDFeBDTnI3RVVJ4kO7bz1FSZrkQ/jdQkXf5+ZDNIRMRT4v60OZd1ZFKj7vQ7SEYUWyQfNDqwxsRcKi9kOFj3RF8+/4Q6Koe0WhUvpDDhF/RdGy+kN0M4FFkdX6Q7POgkVduPpDQ1WERVte+kNPyYVFNc75Qw44h0WZDPlDI2GKRbbe9kO3Eo5FQbzzQ+PKkUVbHvBDNgaVRcia7EN6+5dFCQ/pQ8PzmkUzROVDyOmfRe7d3kO2/aFFM3rcQ3gqpEX6Y9pDdUimRWfd2EODM6hFTwfYQ3s2qkWJx9dDMPesRd8W2EPsurBFs+DYQw==</polyline>
+              </top-curve>
+              <bottom-curve>
+                <xspline>
+                  <point y="2294.948096751271" x="911.0619448281332"/>
+                  <point y="2290.895413400892" x="4469.707143422217"/>
+                  <point y="2260.084453243506" x="5643.289309796978"/>
+                </xspline>
+                <polyline>98NjRCtvD0V9lxVFnkYPRaHUVUVaHA9FWjpsRQUED0Ulg35F+eYORXxBh0Vcww5FubCORWiVDkWVOpZFtlgORbc6nkXnCw5FUVqwRVpBDUU=</polyline>
+              </bottom-curve>
+            </distortion-model>
+            <fov-params mode="auto" fov="0.20000000000000001" fov_max="2" fov_min="0.20000000000000001"/>
+            <frame-params center_x="3116.5" mode="auto" width="6233" height="9592" center_y="4796"/>
+            <bend-params mode="manual" bend_max="0.5" bend_min="-0.5" bend="-0.161"/>
+            <size-params mode="by-area" width="5006.246428738913" distance="44884.353248333136" height="1745.6509826184092"/>
+          </warp>
+          <dependencies>
+            <rotation degrees="0"/>
+            <page-outline>
+              <point y="0" x="0"/>
+              <point y="0" x="6233"/>
+              <point y="9592" x="6233"/>
+              <point y="9592" x="0"/>
+              <point y="0" x="0"/>
+            </page-outline>
+          </dependencies>
+        </params>
+      </page>
+    </deskew>
+    <select-content average="0" pageDetectionBoxWidth="0" maxDeviation="1" pageDetectionBoxHeight="0" pageDetectionTolerance="0.10000000000000001" sigma="0">
+      <page id="4">
+        <params mode="auto" content-detect="true" deviation="-67.692310493881067" page-detect="false" fine-tune-corners="false">
+          <content-rect width="5400" y="416" height="7576" x="472"/>
+          <page-rect width="6420.257406305053" y="0" height="9520.58470960975" x="0"/>
+          <content-size-mm width="114.3" height="160.3586666666667"/>
+          <page-borders right="0" left="0" bottom="0" top="0"/>
+          <dependencies>
+            <rotated-page-outline>
+              <point y="100.4680102060028" x="0"/>
+              <point y="99.7351217355735" x="62.35404556441154"/>
+              <point y="96.7454571053226" x="311.7241513108266"/>
+              <point y="90.48285718793278" x="810.2433017488394"/>
+              <point y="86.73042674574765" x="1308.467921789118"/>
+              <point y="82.447360271121" x="1805.374669429371"/>
+              <point y="75.21185090595947" x="2295.492810463354"/>
+              <point y="0" x="4134.552291220056"/>
+              <point y="18.73017728732771" x="4654.476185515688"/>
+              <point y="63.08974817373189" x="5276.541219370713"/>
+              <point y="76.76230152745376" x="5816.490549832818"/>
+              <point y="72.23265157075679" x="6299.668588485285"/>
+              <point y="71.64823936086799" x="6359.973266223082"/>
+              <point y="71.35451263718551" x="6390.117902815264"/>
+              <point y="915.8766855366125" x="6397.653259864844"/>
+              <point y="1974.830060326164" x="6405.188296116012"/>
+              <point y="3029.277319351101" x="6412.723011589255"/>
+              <point y="4079.072648683504" x="6420.257406305053"/>
+              <point y="9138.288605728741" x="6420.257406305053"/>
+              <point y="9139.901179447152" x="6412.723011589255"/>
+              <point y="9141.512307437833" x="6405.188296116012"/>
+              <point y="9143.121986820426" x="6397.653259864844"/>
+              <point y="9144.730214713871" x="6390.117902815269"/>
+              <point y="9151.148553746991" x="6359.973266223085"/>
+              <point y="9163.914683555615" x="6299.668588485285"/>
+              <point y="9262.488367256905" x="5816.490549832817"/>
+              <point y="9082.233986588737" x="5276.541219370713"/>
+              <point y="9376.219286190521" x="4654.476185515689"/>
+              <point y="9372.174353753058" x="4134.552291220053"/>
+              <point y="8872.218083971005" x="2295.492810463355"/>
+              <point y="8915.932537233401" x="1805.37466942937"/>
+              <point y="8993.855367570124" x="1308.467921789121"/>
+              <point y="9079.115225235353" x="810.2433017488388"/>
+              <point y="9348.520374861282" x="311.7241513108271"/>
+              <point y="9485.954272529681" x="62.35404556441154"/>
+              <point y="9520.58470960975" x="1.13686837721616e-13"/>
+            </rotated-page-outline>
+          </dependencies>
+          <original_dpi horizontal="1200" vertical="1200"/>
+        </params>
+      </page>
+    </select-content>
+    <page-layout/>
+    <output>
+      <page id="4">
+        <zones pictureZonesSensitivity="100"/>
+        <fill-zones pictureZonesSensitivity="100"/>
+        <params despeckleLevel="cautious">
+          <dpi horizontal="600" vertical="600"/>
+          <color-params colorMode="bw">
+            <color-or-grayscale autoLayer="1" pictureZonesLayer="0" foregroundLayer="0" normalizeIllumination="0" whiteMargins="0"/>
+            <bw thresholdWolfWinSize="200" thresholdGatosAdj="0" thresholdWolfAdj="0" thresholdGatosScale="0.59999999999999998" thresholdWolfCoef="0.29999999999999999" thresholdOtsuAdj="0" thresholdGatosCoef="0.29999999999999999" thresholdMethod="otsu" thresholdForegAdj="0" thresholdSauvolaAdj="0" thresholdSauvolaWinSize="200" thresholdSauvolaCoef="0.29999999999999999" thresholdGatosWinSize="200"/>
+          </color-params>
+        </params>
+      </page>
+    </output>
+  </filters>
+</project>

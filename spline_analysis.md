@@ -88,9 +88,82 @@
 - **Timing:** Live data kan afwijken van opgeslagen data
 - **State:** Applicatie moet in juiste fase zijn (deskew step)
 
-### 6. **Conclusie**
+### 6. **Automatische Spline Detectie (Source Code Analyse)**
+
+#### **Locatie van automatische curve detectie:**
+
+**Hoofdbestand:** `/src/core/filters/deskew/Task.cpp` (regel ~570)
+
+```cpp
+case MODE_AUTO:
+{
+    DistortionModelBuilder model_builder(
+        orig_image_transform.transform().inverted().map(QPointF(0, 1))
+    );
+
+    // 1. TEKST LIJN DETECTIE
+    TextLineTracer::trace(
+        AffineTransformedImage(data.grayImage(), orig_image_transform),
+        model_builder, status, m_ptrDbg.get()
+    );
+
+    // 2. TOP/BOTTOM RAND DETECTIE  
+    TopBottomEdgeTracer::trace(
+        data.grayImage(), model_builder.verticalBounds(),
+        model_builder, status, m_ptrDbg.get()
+    );
+
+    // 3. DISTORTION MODEL BOUWEN
+    DistortionModel distortion_model(
+        model_builder.tryBuildModel(
+            params.dewarpingParams().fovParams(),
+            params.dewarpingParams().frameParams(),
+            params.dewarpingParams().bendParams(),
+            m_ptrDbg.get(), &data.origImage())
+    );
+}
+```
+
+#### **Proces van automatische detectie:**
+
+1. **TextLineTracer** (`/src/dewarping/TextLineTracer.cpp`):
+   - Analyseert tekstlijnen in de afbeelding
+   - Gebruikt gradiënt-analyse om tekst contours te volgen
+   - Bouwt een lijst van gevonden curves op
+   
+2. **TopBottomEdgeTracer** (`/src/dewarping/TopBottomEdgeTracer.cpp`):
+   - Detecteert de boven- en onderranden van de pagina
+   - Gebruikt edge-detectie algoritmen
+   - Bepaalt de verticale grenzen van de pagina-inhoud
+
+3. **DistortionModelBuilder** (`/src/dewarping/DistortionModelBuilder.cpp`):
+   - Combineert alle gevonden curves
+   - Bouwt een mathematisch model van de pagina-vervorming
+   - Genereert de initial spline control points
+
+#### **Fallback mechanisme:**
+Als automatische detectie faalt, wordt een **triviale transformatie** gebruikt:
+```cpp
+// Set up a trivial transformation.
+distortion_model.setTopCurve(std::vector<QPointF>{
+    to_orig.map(transformed_box.topLeft()),
+    to_orig.map(transformed_box.topRight())
+});
+distortion_model.setBottomCurve(std::vector<QPointF>{
+    to_orig.map(transformed_box.bottomLeft()),
+    to_orig.map(transformed_box.bottomRight())
+});
+```
+
+#### **Wanneer gebeurt dit:**
+- Bij het **eerste bezoek** aan de Distortion Correction stap
+- Wanneer `MODE_AUTO` is geselecteerd in dewarping parameters
+- Voor elke nieuwe pagina die nog geen spline data heeft
+
+### 7. **Conclusie**
 
 **✅ Succesvolle correlatie tussen MCP en projectbestand**
 **✅ Coördinaten komen perfect overeen**
-**⚠️ Kleine discrepantie in aantal bottom points (3 vs 4)**
+**⚠️ Kleine discrepantie in aantal bottom points (3 vs 4) - dit toont het verschil tussen opgeslagen en live state**
 **🎯 Gereed voor vervolgstappen zoals validatie en synchronisatie**
+**🔍 Automatische spline detectie gebeurt via TextLineTracer + TopBottomEdgeTracer + DistortionModelBuilder**
