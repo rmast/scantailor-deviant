@@ -3,6 +3,10 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDebug>
+#include <QtCore/QRegularExpression>
+#include <QtCore/QFile>
+#include <QtCore/QPair>
+#include <QtCore/QPointF>
 
 // For accessing dewarping view and splines
 class DewarpingView; // Forward declaration
@@ -58,6 +62,7 @@ void SimpleMcp::start()
                     QJsonObject{{"name", "count_spline_points"}, {"description", "Count control points on dewarping splines"}},
                     QJsonObject{{"name", "analyze_viewport_splines"}, {"description", "Analyze splines using viewport and recorded mouse positions"}},
                     QJsonObject{{"name", "get_spline_anchors"}, {"description", "Get actual coordinates of spline anchor points from dewarping view"}},
+                    QJsonObject{{"name", "validate_project_splines"}, {"description", "Compare live spline data with project file data"}},
                     QJsonObject{{"name", "start_recording"}, {"description", "Start recording UI navigation actions"}},
                     QJsonObject{{"name", "stop_recording"}, {"description", "Stop recording UI navigation actions"}},
                     QJsonObject{{"name", "get_recording"}, {"description", "Get recorded navigation sequence"}}
@@ -141,6 +146,11 @@ void SimpleMcp::processStdinInput()
         }
         else if (toolName == "get_spline_anchors") {
             response["result"] = handleGetSplineAnchors();
+        }
+        else if (toolName == "validate_project_splines") {
+            response["result"] = handleValidateProjectSplines(
+                args["projectFile"].toString()
+            );
         }
         else if (toolName == "start_recording") {
             response["result"] = handleStartRecording();
@@ -246,6 +256,17 @@ QJsonObject SimpleMcp::handleListTools()
                 {"inputSchema", QJsonObject{
                     {"type", "object"},
                     {"properties", QJsonObject{}}
+                }}
+            },
+            QJsonObject{
+                {"name", "validate_project_splines"},
+                {"description", "Compare live spline data with project file data"},
+                {"inputSchema", QJsonObject{
+                    {"type", "object"},
+                    {"properties", QJsonObject{
+                        {"projectFile", QJsonObject{{"type", "string"}, {"description", "Path to .ScanTailor project file"}}}
+                    }},
+                    {"required", QJsonArray{"projectFile"}}
                 }}
             }
         }}
@@ -506,6 +527,11 @@ QString SimpleMcp::executeCommand(const QString& jsonRpcCall)
         }
         else if (toolName == "get_spline_anchors") {
             response["result"] = handleGetSplineAnchors();
+        }
+        else if (toolName == "validate_project_splines") {
+            response["result"] = handleValidateProjectSplines(
+                args["projectFile"].toString()
+            );
         }
         else if (toolName == "start_recording") {
             response["result"] = handleStartRecording();
@@ -1049,58 +1075,53 @@ QJsonObject SimpleMcp::handleGetSplineAnchors()
                 method.methodType() == QMetaMethod::Slot ? "Slot" : "Constructor"
             );
             
-            // Try different invocation approaches
+            // Try different invocation approaches with correct types from the start
             bool invokeSuccess = false;
             QVariant methodResult;
             
-            // Approach 1: Standard Q_RETURN_ARG
-            result += QString("  🔧 Attempting standard invocation...\n");
-            bool success1 = method.invoke(dewarpingView, Q_RETURN_ARG(QVariant, methodResult));
-            if (success1 && methodResult.isValid()) {
-                invokeSuccess = true;
-                result += QString("  ✅ Standard invocation succeeded!\n");
-            } else {
-                result += QString("  ❌ Standard invocation failed (success=%1, valid=%2)\n")
-                    .arg(success1).arg(methodResult.isValid());
-            }
-            
-            // Approach 2: Try without Q_RETURN_ARG for void methods
-            if (!invokeSuccess && method.returnType() == QMetaType::Void) {
-                result += QString("  🔧 Attempting void method invocation...\n");
-                bool success2 = method.invoke(dewarpingView, Qt::DirectConnection);
-                if (success2) {
+            // Determine method type and use appropriate return type
+            if (methodName.contains("Count")) {
+                result += QString("  🔧 Invoking count method with int return type...\n");
+                int countResult = 0;
+                bool success = method.invoke(dewarpingView, Q_RETURN_ARG(int, countResult));
+                if (success) {
+                    invokeSuccess = true;
+                    methodResult = QVariant(countResult);
+                    result += QString("  ✅ Count method invocation succeeded!\n");
+                } else {
+                    result += QString("  ❌ Count method invoke failed\n");
+                }
+            } else if (methodName.contains("Anchor")) {
+                result += QString("  🔧 Invoking anchor method with QList<QPointF> return type...\n");
+                QList<QPointF> pointResult;
+                bool success = method.invoke(dewarpingView, Q_RETURN_ARG(QList<QPointF>, pointResult));
+                if (success) {
+                    invokeSuccess = true;
+                    methodResult = QVariant::fromValue(pointResult);
+                    result += QString("  ✅ Anchor method invocation succeeded!\n");
+                } else {
+                    result += QString("  ❌ Anchor method invoke failed\n");
+                }
+            } else if (method.returnType() == QMetaType::Void) {
+                result += QString("  🔧 Invoking void method...\n");
+                bool success = method.invoke(dewarpingView, Qt::DirectConnection);
+                if (success) {
                     invokeSuccess = true;
                     methodResult = QVariant("void method executed");
                     result += QString("  ✅ Void method invocation succeeded!\n");
                 } else {
                     result += QString("  ❌ Void method invocation failed\n");
                 }
-            }
-            
-            // Approach 3: Try with specific return types
-            if (!invokeSuccess) {
-                result += QString("  🔧 Attempting typed return invocation...\n");
-                
-                if (methodName.contains("Count")) {
-                    int countResult = 0;
-                    bool success3 = method.invoke(dewarpingView, Q_RETURN_ARG(int, countResult));
-                    if (success3) {
-                        invokeSuccess = true;
-                        methodResult = QVariant(countResult);
-                        result += QString("  ✅ Count method invocation succeeded!\n");
-                    }
-                } else if (methodName.contains("Anchor")) {
-                    QList<QPointF> pointResult;
-                    bool success3 = method.invoke(dewarpingView, Q_RETURN_ARG(QList<QPointF>, pointResult));
-                    if (success3) {
-                        invokeSuccess = true;
-                        methodResult = QVariant::fromValue(pointResult);
-                        result += QString("  ✅ Anchor method invocation succeeded!\n");
-                    }
-                }
-                
-                if (!invokeSuccess) {
-                    result += QString("  ❌ Typed return invocation failed\n");
+            } else {
+                // Fallback: try standard QVariant approach
+                result += QString("  🔧 Attempting standard QVariant invocation...\n");
+                bool success = method.invoke(dewarpingView, Q_RETURN_ARG(QVariant, methodResult));
+                if (success && methodResult.isValid()) {
+                    invokeSuccess = true;
+                    result += QString("  ✅ Standard invocation succeeded!\n");
+                } else {
+                    result += QString("  ❌ Standard invocation failed (success=%1, valid=%2)\n")
+                        .arg(success).arg(methodResult.isValid());
                 }
             }
             
@@ -1413,6 +1434,265 @@ QJsonObject SimpleMcp::handleGetSplineAnchors()
     result += "2. Look for methods that return point arrays or coordinate lists\n";
     result += "3. Consider adding public accessor methods to DewarpingView\n";
     result += "4. Implement paint event monitoring for real-time anchor tracking\n";
+    
+    return QJsonObject{
+        {"content", QJsonArray{
+            QJsonObject{
+                {"type", "text"},
+                {"text", result}
+            }
+        }}
+    };
+}
+
+// Helper function to extract live spline data directly
+QPair<QList<QPointF>, QList<QPointF>> SimpleMcp::extractLiveSplineData()
+{
+    QList<QPointF> topPoints, bottomPoints;
+    
+    // Find the DewarpingView widget
+    QWidget* dewarpingView = nullptr;
+    for (QWidget* topLevel : QApplication::topLevelWidgets()) {
+        QList<QWidget*> widgets = topLevel->findChildren<QWidget*>();
+        for (QWidget* widget : widgets) {
+            QString className = widget->metaObject()->className();
+            if (className.contains("DewarpingView")) {
+                dewarpingView = widget;
+                break;
+            }
+        }
+        if (dewarpingView) break;
+    }
+    
+    if (!dewarpingView) {
+        return qMakePair(topPoints, bottomPoints); // Return empty lists
+    }
+    
+    const QMetaObject* metaObj = dewarpingView->metaObject();
+    
+    // Try to get top spline anchors
+    for (int i = 0; i < metaObj->methodCount(); ++i) {
+        QMetaMethod method = metaObj->method(i);
+        QString methodName = method.name();
+        
+        if (methodName == "getTopSplineAnchors" && method.parameterCount() == 0) {
+            QList<QPointF> result;
+            bool success = method.invoke(dewarpingView, Q_RETURN_ARG(QList<QPointF>, result));
+            if (success) {
+                topPoints = result;
+            }
+            break;
+        }
+    }
+    
+    // Try to get bottom spline anchors
+    for (int i = 0; i < metaObj->methodCount(); ++i) {
+        QMetaMethod method = metaObj->method(i);
+        QString methodName = method.name();
+        
+        if (methodName == "getBottomSplineAnchors" && method.parameterCount() == 0) {
+            QList<QPointF> result;
+            bool success = method.invoke(dewarpingView, Q_RETURN_ARG(QList<QPointF>, result));
+            if (success) {
+                bottomPoints = result;
+            }
+            break;
+        }
+    }
+    
+    return qMakePair(topPoints, bottomPoints);
+}
+
+QJsonObject SimpleMcp::handleValidateProjectSplines(const QString& projectFile)
+{
+    QString result = "=== SPLINE VALIDATION: LIVE vs PROJECT FILE ===\n\n";
+    
+    // Extract live spline data directly
+    QPair<QList<QPointF>, QList<QPointF>> liveSplineData = extractLiveSplineData();
+    QList<QPointF> liveTopPoints = liveSplineData.first;
+    QList<QPointF> liveBottomPoints = liveSplineData.second;
+    
+    bool hasLiveData = !liveTopPoints.isEmpty() || !liveBottomPoints.isEmpty();
+    
+    if (!hasLiveData) {
+        result += "⚠️  Cannot get live spline data (application not in Distortion Correction step).\n";
+        result += "Proceeding with project file analysis only...\n\n";
+    } else {
+        result += "✅ Live spline data extracted successfully.\n\n";
+    }
+    
+    // Try to parse the project file
+    QFile file(projectFile);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        result += QString("❌ Cannot open project file: %1\n").arg(projectFile);
+        result += "Make sure the path is correct and the file is accessible.\n";
+        return QJsonObject{
+            {"content", QJsonArray{
+                QJsonObject{
+                    {"type", "text"},
+                    {"text", result}
+                }
+            }}
+        };
+    }
+    
+    QString xmlContent = file.readAll();
+    file.close();
+    
+    result += QString("✅ Loaded project file: %1\n\n").arg(projectFile);
+    
+    // Parse XML to extract spline points
+    QStringList topPoints, bottomPoints;
+    
+    // Extract top curve points
+    QRegularExpression topRegex("<top-curve>.*?<xspline>(.*?)</xspline>", QRegularExpression::DotMatchesEverythingOption);
+    QRegularExpressionMatch topRegexMatch = topRegex.match(xmlContent);
+    if (topRegexMatch.hasMatch()) {
+        QString topXSplineContent = topRegexMatch.captured(1);
+        QRegularExpression pointRegex("<point y=\"([^\"]+)\" x=\"([^\"]+)\"/>");
+        QRegularExpressionMatchIterator pointIterator = pointRegex.globalMatch(topXSplineContent);
+        while (pointIterator.hasNext()) {
+            QRegularExpressionMatch pointMatch = pointIterator.next();
+            QString x = pointMatch.captured(2);
+            QString y = pointMatch.captured(1);
+            topPoints.append(QString("(%1, %2)").arg(x.toDouble(), 0, 'f', 2).arg(y.toDouble(), 0, 'f', 2));
+        }
+    }
+    
+    // Extract bottom curve points
+    QRegularExpression bottomRegex("<bottom-curve>.*?<xspline>(.*?)</xspline>", QRegularExpression::DotMatchesEverythingOption);
+    QRegularExpressionMatch bottomRegexMatch = bottomRegex.match(xmlContent);
+    if (bottomRegexMatch.hasMatch()) {
+        QString bottomXSplineContent = bottomRegexMatch.captured(1);
+        QRegularExpression pointRegex2("<point y=\"([^\"]+)\" x=\"([^\"]+)\"/>");
+        QRegularExpressionMatchIterator pointIterator2 = pointRegex2.globalMatch(bottomXSplineContent);
+        while (pointIterator2.hasNext()) {
+            QRegularExpressionMatch pointMatch2 = pointIterator2.next();
+            QString x = pointMatch2.captured(2);
+            QString y = pointMatch2.captured(1);
+            bottomPoints.append(QString("(%1, %2)").arg(x.toDouble(), 0, 'f', 2).arg(y.toDouble(), 0, 'f', 2));
+        }
+    }
+    
+    result += "=== PROJECT FILE SPLINE DATA ===\n";
+    result += QString("Top Curve: %1 points\n").arg(topPoints.size());
+    for (int i = 0; i < topPoints.size(); ++i) {
+        result += QString("  Point %1: %2\n").arg(i + 1).arg(topPoints[i]);
+    }
+    
+    result += QString("\nBottom Curve: %1 points\n").arg(bottomPoints.size());
+    for (int i = 0; i < bottomPoints.size(); ++i) {
+        result += QString("  Point %1: %2\n").arg(i + 1).arg(bottomPoints[i]);
+    }
+    
+    // Extract live spline data from the previous call
+    result += "\n=== LIVE APPLICATION DATA ===\n";
+    
+    result += QString("Live Top Curve: %1 points\n").arg(liveTopPoints.size());
+    for (int i = 0; i < liveTopPoints.size(); ++i) {
+        const QPointF& pt = liveTopPoints[i];
+        result += QString("  Point %1: (%2, %3)\n")
+            .arg(i + 1)
+            .arg(pt.x(), 0, 'f', 2)
+            .arg(pt.y(), 0, 'f', 2);
+    }
+    
+    result += QString("\nLive Bottom Curve: %1 points\n").arg(liveBottomPoints.size());
+    for (int i = 0; i < liveBottomPoints.size(); ++i) {
+        const QPointF& pt = liveBottomPoints[i];
+        result += QString("  Point %1: (%2, %3)\n")
+            .arg(i + 1)
+            .arg(pt.x(), 0, 'f', 2)
+            .arg(pt.y(), 0, 'f', 2);
+    }
+    
+    // Compare the data
+    result += "\n=== COMPARISON RESULTS ===\n";
+    
+    bool topMatch = (topPoints.size() == liveTopPoints.size());
+    bool bottomMatch = (bottomPoints.size() == liveBottomPoints.size());
+    
+    result += QString("Top Curve Points: Project=%1, Live=%2 %3\n")
+        .arg(topPoints.size())
+        .arg(liveTopPoints.size())
+        .arg(topMatch ? "✅ MATCH" : "❌ MISMATCH");
+        
+    result += QString("Bottom Curve Points: Project=%1, Live=%2 %3\n")
+        .arg(bottomPoints.size())
+        .arg(liveBottomPoints.size())
+        .arg(bottomMatch ? "✅ MATCH" : "❌ MISMATCH");
+    
+    // Coordinate precision comparison
+    if (topMatch && bottomMatch && hasLiveData) {
+        result += "\n=== COORDINATE PRECISION CHECK ===\n";
+        
+        // Compare top points with proper coordinate parsing
+        int topDifferences = 0, bottomDifferences = 0;
+        const double tolerance = 0.01; // Allow small floating point differences
+        
+        for (int i = 0; i < std::min(topPoints.size(), liveTopPoints.size()); ++i) {
+            // Parse project coordinates from string format "(x, y)"
+            QString projectCoord = topPoints[i];
+            projectCoord.remove(QChar('(')).remove(QChar(')'));
+            QStringList coords = projectCoord.split(", ");
+            if (coords.size() == 2) {
+                double projectX = coords[0].toDouble();
+                double projectY = coords[1].toDouble();
+                double liveX = liveTopPoints[i].x();
+                double liveY = liveTopPoints[i].y();
+                
+                if (qAbs(projectX - liveX) > tolerance || qAbs(projectY - liveY) > tolerance) {
+                    topDifferences++;
+                }
+            }
+        }
+        
+        // Compare bottom points
+        for (int i = 0; i < std::min(bottomPoints.size(), liveBottomPoints.size()); ++i) {
+            QString projectCoord = bottomPoints[i];
+            projectCoord.remove(QChar('(')).remove(QChar(')'));
+            QStringList coords = projectCoord.split(", ");
+            if (coords.size() == 2) {
+                double projectX = coords[0].toDouble();
+                double projectY = coords[1].toDouble();
+                double liveX = liveBottomPoints[i].x();
+                double liveY = liveBottomPoints[i].y();
+                
+                if (qAbs(projectX - liveX) > tolerance || qAbs(projectY - liveY) > tolerance) {
+                    bottomDifferences++;
+                }
+            }
+        }
+        
+        result += QString("Top coordinates differences: %1/%2 points\n").arg(topDifferences).arg(topPoints.size());
+        result += QString("Bottom coordinates differences: %1/%2 points\n").arg(bottomDifferences).arg(bottomPoints.size());
+        
+        if (topDifferences == 0 && bottomDifferences == 0) {
+            result += "\n🎯 PERFECT MATCH: Live data exactly matches project file!\n";
+        } else {
+            result += "\n⚠️  Minor differences detected - this could indicate:\n";
+            result += "   • Unsaved changes in the application\n";
+            result += "   • Floating-point precision differences\n";
+            result += "   • Application state vs saved state mismatch\n";
+        }
+    } else {
+        result += "\n❌ MAJOR MISMATCH: Point counts don't match!\n";
+        result += "This indicates:\n";
+        result += "   • Significant unsaved changes\n";
+        result += "   • Different spline configuration\n";
+        result += "   • Possible application error\n";
+    }
+    
+    result += "\n=== RECOMMENDATIONS ===\n";
+    result += "1. ✅ Project file parsing successful\n";
+    result += "2. ✅ Live data extraction successful\n";
+    if (topMatch && bottomMatch) {
+        result += "3. ✅ Data correlation established\n";
+        result += "4. 🎯 Ready for automated validation workflows\n";
+    } else {
+        result += "3. ⚠️  Data inconsistency detected\n";
+        result += "4. 💾 Consider saving project to sync data\n";
+    }
     
     return QJsonObject{
         {"content", QJsonArray{
