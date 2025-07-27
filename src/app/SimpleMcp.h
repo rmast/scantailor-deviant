@@ -62,7 +62,6 @@ private:
     QJsonObject handleCountSplinePoints(); // New function to count dewarping spline points
     QJsonObject handleAnalyzeViewportSplines(); // Analyze splines using viewport and mouse positions
     QJsonObject handleGetSplineAnchors(); // Get actual coordinates of spline anchor points
-    QJsonObject handleValidateProjectSplines(const QString& projectFile); // Compare live vs project file splines
     
     // Recording functionality
     QJsonObject handleStartRecording();
@@ -74,9 +73,6 @@ private:
     QString getWidgetPath(QWidget* widget);
     QJsonObject widgetToJson(QWidget* widget);
     QJsonArray getAllWidgets();
-    
-    // Helper function to extract live spline data directly
-    QPair<QList<QPointF>, QList<QPointF>> extractLiveSplineData();
     
     QTimer* m_stdinTimer;
     bool m_serverRunning;
@@ -90,4 +86,6 @@ private:
     bool m_recording;
     QJsonArray m_recordedActions;
     void recordAction(const QString& action, const QJsonObject& details);
+    QPair<QList<QPointF>, QList<QPointF>> SimpleMcp::extractLiveSplineData();
+    QJsonObject SimpleMcp::handleValidateProjectSplines(const QString& projectFile);
 };
