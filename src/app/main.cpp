@@ -88,7 +88,7 @@ int main(int argc, char** argv)
 
     // Simple MCP server for UI introspection (alternative to qtmcp)
     SimpleMcp* mcpServer = nullptr;
-    if (qEnvironmentVariableIsSet("SCANTAILOR_MCP_ENABLE")) {
+    if (qEnvironmentVariableIsSet("SCANTAILOR_MCP_ENABLE") || cli.hasMcpMode()) {
         mcpServer = new SimpleMcp(&app);
         mcpServer->start();
         

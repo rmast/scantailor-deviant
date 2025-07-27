@@ -86,6 +86,6 @@ private:
     bool m_recording;
     QJsonArray m_recordedActions;
     void recordAction(const QString& action, const QJsonObject& details);
-    QPair<QList<QPointF>, QList<QPointF>> SimpleMcp::extractLiveSplineData();
-    QJsonObject SimpleMcp::handleValidateProjectSplines(const QString& projectFile);
+    QPair<QList<QPointF>, QList<QPointF>> extractLiveSplineData();
+    QJsonObject handleValidateProjectSplines(const QString& projectFile);
 };

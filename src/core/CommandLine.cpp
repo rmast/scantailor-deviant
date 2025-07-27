@@ -126,6 +126,7 @@ CommandLine::parseCli(QStringList const& argv)
     opts << "tiff-force-rgb";
     opts << "tiff-force-grayscale";
     opts << "tiff-force-keep-color-space";
+    opts << "mcp-mode";
 
     QMap<QString, QString> shortMap;
     shortMap["h"] = "help";
@@ -402,7 +403,8 @@ CommandLine::printHelp()
     std::cout << "\t--window-title=WindowTitle\t\t-- default: project name" << std::endl;
     std::cout << "\t--page-detection-box=<widthxheight>\t\t-- in mm" << std::endl;
     std::cout << "\t\t--page-detection-tolerance=<0.0..1.0>\t-- default: 0.1" << std::endl;
-    std::cout << "\t--disable-check-output\t\t\t-- don't check if page is valid when switching to step 6";
+    std::cout << "\t--disable-check-output\t\t\t-- don't check if page is valid when switching to step 6" << std::endl;
+    std::cout << "\t--mcp-mode\t\t\t\t-- enable Model Context Protocol mode for automation" << std::endl;
     std::cout << std::endl;
 }
 

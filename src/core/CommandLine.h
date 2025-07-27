@@ -140,6 +140,10 @@ public:
     {
         return contains("help");
     }
+    bool hasMcpMode() const
+    {
+        return contains("mcp-mode");
+    }
     bool hasOutputProject() const
     {
         return contains("output-project") && !m_options["output-project"].isEmpty();

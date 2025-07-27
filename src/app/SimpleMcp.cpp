@@ -778,6 +778,7 @@ bool SimpleMcp::eventFilter(QObject* watched, QEvent* event)
             eventDetails["widget_name"] = widget->objectName();
             eventDetails["widget_path"] = widgetPath;
             eventDetails["event_type"] = event->type();
+            // Qt 6.4.2 compatibility: use position() which exists in Qt 6.0+
             eventDetails["mouse_x"] = mouseEvent->position().x();
             eventDetails["mouse_y"] = mouseEvent->position().y();
             eventDetails["button"] = static_cast<int>(mouseEvent->button());
@@ -1470,12 +1471,12 @@ QPair<QList<QPointF>, QList<QPointF>> SimpleMcp::extractLiveSplineData()
     
     const QMetaObject* metaObj = dewarpingView->metaObject();
     
-    // Try to get top spline anchors
+    // Try to get top spline control points
     for (int i = 0; i < metaObj->methodCount(); ++i) {
         QMetaMethod method = metaObj->method(i);
         QString methodName = method.name();
         
-        if (methodName == "getTopSplineAnchors" && method.parameterCount() == 0) {
+        if (methodName == "getTopSplineControlPoints" && method.parameterCount() == 0) {
             QList<QPointF> result;
             bool success = method.invoke(dewarpingView, Q_RETURN_ARG(QList<QPointF>, result));
             if (success) {
@@ -1485,12 +1486,12 @@ QPair<QList<QPointF>, QList<QPointF>> SimpleMcp::extractLiveSplineData()
         }
     }
     
-    // Try to get bottom spline anchors
+    // Try to get bottom spline control points
     for (int i = 0; i < metaObj->methodCount(); ++i) {
         QMetaMethod method = metaObj->method(i);
         QString methodName = method.name();
         
-        if (methodName == "getBottomSplineAnchors" && method.parameterCount() == 0) {
+        if (methodName == "getBottomSplineControlPoints" && method.parameterCount() == 0) {
             QList<QPointF> result;
             bool success = method.invoke(dewarpingView, Q_RETURN_ARG(QList<QPointF>, result));
             if (success) {

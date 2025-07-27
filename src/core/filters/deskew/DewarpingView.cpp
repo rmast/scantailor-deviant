@@ -387,4 +387,45 @@ DewarpingView::widgetToSource(QPointF const& pt) const
     return virtualToImage().map(widgetToVirtual().map(pt));
 }
 
+// MCP accessor methods for spline data extraction
+int
+DewarpingView::getTopSplineControlPointCount() const
+{
+    return m_topSpline.spline().numControlPoints();
+}
+
+int
+DewarpingView::getBottomSplineControlPointCount() const
+{
+    return m_bottomSpline.spline().numControlPoints();
+}
+
+QList<QPointF>
+DewarpingView::getTopSplineControlPoints() const
+{
+    QList<QPointF> points;
+    XSpline const& spline = m_topSpline.spline();
+    int const num_points = spline.numControlPoints();
+    
+    for (int i = 0; i < num_points; ++i) {
+        points.append(spline.controlPointPosition(i));
+    }
+    
+    return points;
+}
+
+QList<QPointF>
+DewarpingView::getBottomSplineControlPoints() const
+{
+    QList<QPointF> points;
+    XSpline const& spline = m_bottomSpline.spline();
+    int const num_points = spline.numControlPoints();
+    
+    for (int i = 0; i < num_points; ++i) {
+        points.append(spline.controlPointPosition(i));
+    }
+    
+    return points;
+}
+
 } // namespace deskew

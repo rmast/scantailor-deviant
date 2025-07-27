@@ -60,6 +60,12 @@ public slots:
     void frameParamsChanged(dewarping::FrameParams const& frame_params);
 
     void bendParamsChanged(dewarping::BendParams const& bend_params);
+
+    // MCP accessor methods for spline data extraction
+    Q_INVOKABLE int getTopSplineControlPointCount() const;
+    Q_INVOKABLE int getBottomSplineControlPointCount() const;
+    Q_INVOKABLE QList<QPointF> getTopSplineControlPoints() const;
+    Q_INVOKABLE QList<QPointF> getBottomSplineControlPoints() const;
 protected:
     virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 private:
